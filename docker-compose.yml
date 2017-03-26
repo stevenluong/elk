@@ -1,0 +1,38 @@
+version: '2'
+
+services:
+  elasticsearch:
+    build: elasticsearch/
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+    networks:
+      - nginx_default
+  logstash:
+    build: logstash/
+    command: -f /etc/logstash/conf.d/ --config.reload.automatic
+    volumes:
+      - ./logstash/config:/etc/logstash/conf.d
+      - ./logstash/grok:/opt/logstash/patterns
+    ports:
+      - "5000:5000"
+    networks:
+      - nginx_default
+    depends_on:
+      - elasticsearch
+  kibana:
+    build: kibana/
+    volumes:
+      - ./kibana/config/:/opt/kibana/config/
+    ports:
+      - "5601:5601"
+    networks:
+      - nginx_default
+    depends_on:
+      - elasticsearch
+
+networks:
+  nginx_default:
+      external: true
