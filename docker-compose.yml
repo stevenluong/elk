@@ -15,7 +15,7 @@ services:
     command: -f /etc/logstash/conf.d/ --config.reload.automatic
     volumes:
       - ./logstash/config:/etc/logstash/conf.d
-      - ./logstash/grok:/opt/logstash/patterns
+      - ./logstash/patterns:/etc/logstash/patterns
     ports:
       - "5000:5000"
     networks:
